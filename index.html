@@ -1,0 +1,287 @@
+<!-- =====================================================
+  Arjun Parikh — Portfolio Hero
+  Paste this into a Squarespace Code Block
+  ===================================================== -->
+
+<style>
+  /* Scoped to #ap-hero to avoid conflicts with Squarespace */
+
+  #ap-hero {
+    position: relative;
+    background: #000;
+    overflow: hidden;
+    min-height: clamp(200px, 22vw, 380px);
+    display: flex;
+    align-items: center;
+    padding-left:   clamp(16px, 6.2vw, 140px);
+    padding-right:  clamp(16px, 6.2vw, 140px);
+    box-sizing: border-box;
+  }
+
+  #ap-imgs {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  #ap-bio {
+    position: relative;
+    z-index: 10;
+    max-width: 51.5vw;
+    padding: 28px 32px;
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.38);
+    backdrop-filter: blur(24px) saturate(180%) brightness(0.65);
+    -webkit-backdrop-filter: blur(24px) saturate(180%) brightness(0.65);
+    border: 0.5px solid rgba(255, 255, 255, 0.08);
+    border-top-color: rgba(255, 255, 255, 0.0);
+    box-shadow:
+      inset 0 0.5px 0 rgba(255, 255, 255, 0),
+      0 0 0 rgba(0, 0, 0, 0);
+    transition:
+      background 0.5s ease,
+      box-shadow 0.5s ease,
+      border-color 0.5s ease;
+  }
+
+  #ap-bio.lit {
+    background: rgba(0, 0, 0, 0.48);
+    border-color: rgba(255, 255, 255, 0.22);
+    border-top-color: rgba(255, 255, 255, 0.38);
+    box-shadow:
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.45),
+      0 4px 24px rgba(0, 0, 0, 0.35),
+      0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  #ap-bio.lit .ap-m { color: #c2c2c2; }
+  #ap-bio.lit .ap-b { color: #ffffff; }
+
+  #ap-bio p {
+    font-family: 'proxima-nova', system-ui, -apple-system, sans-serif;
+    font-size: clamp(22px, 2vw, 54px);
+    font-weight: 400;
+    line-height: 1.27;
+    letter-spacing: 0.01em;
+    margin: 0;
+  }
+
+  #ap-bio .ap-m { color: #8a8a8a; transition: color 0.5s ease; }
+  #ap-bio .ap-b { color: #c2c2c2; transition: color 0.5s ease; }
+
+  .ap-card {
+    position: absolute;
+    border-radius: 5px;
+    pointer-events: none;
+    will-change: opacity;
+    transition: opacity 0.18s ease;
+    overflow: hidden;
+    background: #1a1a1a;
+    box-sizing: border-box;
+  }
+
+  .ap-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  @media (max-width: 1024px) {
+    #ap-bio { max-width: 72vw; }
+  }
+
+  @media (max-width: 767px) {
+    #ap-hero {
+      min-height: clamp(120px, 30vw, 200px);
+      padding-left:   clamp(16px, 5vw, 32px);
+      padding-right:  clamp(16px, 5vw, 32px);
+    }
+    #ap-bio { max-width: 100%; }
+    #ap-bio p {
+      font-size: clamp(16px, 5.2vw, 24px);
+      line-height: 1.35;
+    }
+  }
+</style>
+
+<div id="ap-hero">
+  <div id="ap-imgs"></div>
+  <div id="ap-bio">
+    <p>
+      <span class="ap-m">Los Angeles based </span><span class="ap-b">brand designer</span><span class="ap-m">, </span><span class="ap-b">art director</span><span class="ap-m">, and </span><span class="ap-b">illustrator</span><span class="ap-m">, working as a </span><span class="ap-b">Staff Visual Designer</span><span class="ap-m"> at </span><span class="ap-b">Postman</span><span class="ap-m">.</span>
+    </p>
+  </div>
+</div>
+
+<script>
+(function () {
+
+  // ─────────────────────────────────────────────────────────
+  // IMAGE CONFIG
+  // Repo:  github.com/arjun-parikh-design/website-hero
+  // Upload 01.jpg … 08.jpg straight to the repo root
+  // Size:  800×530px, JPG 85% quality
+  //
+  // To add more: upload the file, add its name to the array.
+  // To remove one: delete from the array (and optionally repo).
+  // ─────────────────────────────────────────────────────────
+  const BASE = 'https://arjun-parikh-design.github.io/website-hero/';
+
+  const IMAGES = [
+    '01.jpg','02.jpg','03.jpg','04.jpg',
+    '05.jpg','06.jpg','07.jpg','08.jpg',
+    '09.jpg','10.jpg','11.jpg','12.jpg',
+    '13.jpg',
+  ];
+
+  const SIZES = [
+    { w: 150, h: 105 },
+    { w: 175, h: 118 },
+    { w: 125, h:  92 },
+    { w: 195, h: 125 },
+    { w: 138, h: 100 },
+    { w: 165, h: 112 },
+    { w: 115, h:  88 },
+    { w: 185, h: 115 },
+  ];
+
+  // Preload all images for instant display on hover
+  IMAGES.forEach(name => {
+    const img = new Image();
+    img.src = BASE + name;
+  });
+
+  const hero = document.getElementById('ap-hero');
+  const imgs = document.getElementById('ap-imgs');
+
+  let imgIdx   = 0;
+  let sizeIdx  = 0;
+  let lastX    = -999;
+  let lastY    = -999;
+  let userMoved = false;
+  let activeCards = 0;
+  const bio = document.getElementById('ap-bio');
+
+  function updateLit() {
+    bio.classList.toggle('lit', activeCards > 0);
+  }
+
+  // Get text bounding box relative to hero — with padding
+  function getTextZone() {
+    const br = document.getElementById('ap-bio').getBoundingClientRect();
+    const hr = hero.getBoundingClientRect();
+    const pad = 20;
+    return {
+      left:   br.left   - hr.left  - pad,
+      top:    br.top    - hr.top   - pad,
+      right:  br.right  - hr.left  + pad,
+      bottom: br.bottom - hr.top   + pad,
+    };
+  }
+
+  // Check if a card rect overlaps the text zone
+  function overlapsText(cx, cy, w, h, tz) {
+    const cl = cx - w / 2, cr = cx + w / 2;
+    const ct = cy - h / 2, cb = cy + h / 2;
+    return !(cr < tz.left || cl > tz.right || cb < tz.top || ct > tz.bottom);
+  }
+
+  function spawnCard(x, y) {
+    const src = BASE + IMAGES[imgIdx % IMAGES.length];
+    const sz  = SIZES[sizeIdx % SIZES.length];
+    imgIdx++;
+    sizeIdx++;
+
+    // Scale cards proportionally — larger on bigger screens
+    const scale = Math.max(1, Math.min(window.innerWidth / 1440, 1.8));
+    const w = Math.round(sz.w * scale);
+    const h = Math.round(sz.h * scale);
+
+    const hr  = hero.getBoundingClientRect();
+    const tz  = getTextZone();
+    const ox  = (Math.random() - 0.5) * 24;
+    const oy  = (Math.random() - 0.5) * 24;
+    let cx = Math.max(w / 2 + 8, Math.min(hr.width  - w / 2 - 8, x + ox));
+    let cy = Math.max(h / 2 + 8, Math.min(hr.height - h / 2 - 8, y + oy));
+
+    // If card overlaps text zone, nudge it to the nearest clear edge
+    if (overlapsText(cx, cy, w, h, tz)) {
+      // Find which side of the text zone the cursor is closest to
+      const distLeft   = Math.abs(cx - tz.left);
+      const distRight  = Math.abs(cx - tz.right);
+      const distTop    = Math.abs(cy - tz.top);
+      const distBottom = Math.abs(cy - tz.bottom);
+      const minDist    = Math.min(distLeft, distRight, distTop, distBottom);
+
+      if (minDist === distLeft)        cx = tz.left   - w / 2 - 4;
+      else if (minDist === distRight)  cx = tz.right  + w / 2 + 4;
+      else if (minDist === distTop)    cy = tz.top    - h / 2 - 4;
+      else                             cy = tz.bottom + h / 2 + 4;
+
+      // Clamp back into hero bounds
+      cx = Math.max(w / 2 + 8, Math.min(hr.width  - w / 2 - 8, cx));
+      cy = Math.max(h / 2 + 8, Math.min(hr.height - h / 2 - 8, cy));
+    }
+
+    const card = document.createElement('div');
+    card.className = 'ap-card';
+    card.style.cssText = [
+      `width:${w}px`,
+      `height:${h}px`,
+      `left:${Math.round(cx - w / 2)}px`,
+      `top:${Math.round(cy  - h / 2)}px`,
+      `opacity:0`,
+    ].join(';');
+
+    const image = document.createElement('img');
+    image.src = src;
+    image.alt = '';
+    card.appendChild(image);
+    imgs.appendChild(card);
+
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        card.style.opacity = '1';
+        activeCards++;
+        updateLit();
+      })
+    );
+
+    setTimeout(() => {
+      card.style.transition = 'opacity 0.4s ease';
+      card.style.opacity    = '0';
+      setTimeout(() => {
+        if (card.parentNode) card.parentNode.removeChild(card);
+        activeCards = Math.max(0, activeCards - 1);
+        updateLit();
+      }, 450);
+    }, 1200);
+  }
+
+  // Desktop — mouse
+  hero.addEventListener('mouseenter', e => {
+    if (!userMoved) return; // ignore if mouse hasn't moved yet
+    const r = hero.getBoundingClientRect();
+    lastX = e.clientX - r.left;
+    lastY = e.clientY - r.top;
+    spawnCard(lastX, lastY);
+  });
+
+  hero.addEventListener('mousemove', e => {
+    userMoved = true;
+    const r  = hero.getBoundingClientRect();
+    const x  = e.clientX - r.left;
+    const y  = e.clientY - r.top;
+    const dx = x - lastX;
+    const dy = y - lastY;
+    if (Math.sqrt(dx * dx + dy * dy) > 62) {
+      spawnCard(x, y);
+      lastX = x;
+      lastY = y;
+    }
+  });
+
+})();
+</script>
